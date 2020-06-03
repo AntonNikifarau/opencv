@@ -1,37 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Hello OpenCV.js</title>
+    <meta charset="utf-8">
+    <title>Hello OpenCV.js</title>
 </head>
 <body>
-<h2>Hello OpenCV.js</h2>
-<p id="status">OpenCV.js is loading...</p>
+<h2>Антон Никифоров</h2>
 <div>
-  <div class="inputoutput">
-    <img id="imageSrc" alt="No Image" />
-    <div class="caption">imageSrc <input type="file" id="fileInput" name="file" /></div>
-  </div>
-  <div class="inputoutput">
-    <canvas id="canvasOutput" ></canvas>
-    <div class="caption">canvasOutput</div>
-  </div>
+    <ol>
+        <li><p><a href="#/01">Рисование отрезков, окружностей и эллипса</a></p></li>
+        <li><p><a href="#/02">Закрашивание многоугольников</a></p></li>
+        <li><p><a href="#/03">Отсечение</a></p></li>
+        <li><p><a href="#/04">Аппроксимация кривых (Эрмита, Безье или сплайн-функции)</a></p></li>
+        <li><p><a href="#/05">Построение гистограммы изобраения. Преображение цветного изобажения в полутоновое.
+            Бинаризация полутоновых изображений</a></p></li>
+        <li><p><a href="#/06">Устранение шумов на бинарном изображении. Устранение шумов на полутоновом изображении</a>
+        </p></li>
+        <li><p><a href="#/07">Выделение границ объектов на бинарном изображении. Выделение границ объектов на
+            полутоновом изображении</a></p></li>
+        <li><p><a href="#/08">Сегментация изображений. Метод роста областей. Разделение и слияние областей</a></p></li>
+        <li><p><a href="/09">Распознование объектов изображений</a></p></li>
+    </ol>
 </div>
-<script type="text/javascript">
-let imgElement = document.getElementById('imageSrc');
-let inputElement = document.getElementById('fileInput');
-inputElement.addEventListener('change', (e) => {
-  imgElement.src = URL.createObjectURL(e.target.files[0]);
-}, false);
-imgElement.onload = function() {
-  let mat = cv.imread(imgElement);
-  cv.imshow('canvasOutput', mat);
-  mat.delete();
-};
-function onOpenCvReady() {
-  document.getElementById('status').innerHTML = 'OpenCV.js is ready.';
-}
-</script>
-<script async src="https://docs.opencv.org/4.2.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
 </body>
 </html>
