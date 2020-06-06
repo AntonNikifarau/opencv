@@ -38,7 +38,7 @@
 
     let utils = new Utils('errorMessage');
 
-    let draw = function() {
+    let draw = function () {
         let frame1 = new cv.Mat(300, 300, cv.CV_8UC4);
         let point1 = new cv.Point(80, 50);
         let point2 = new cv.Point(220, 250);
@@ -51,7 +51,9 @@
         cv.imshow('canvasRectangle', frame1);
         cv.imshow('canvasPolygon', frame2);
 
-        frame1.delete(); frame2.delete(); matFromArray.delete();
+        frame1.delete();
+        frame2.delete();
+        matFromArray.delete();
     };
 
     utils.loadOpenCv(() => {
