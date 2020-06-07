@@ -20,8 +20,8 @@
 <div>
     <table>
         <tr>
-            <td>прямоугольник</td>
-            <td>многоугольник</td>
+            <td>rectangle</td>
+            <td>polygon</td>
         </tr>
         <tr>
             <td>
@@ -46,10 +46,10 @@
 
         let frame2 = new cv.Mat.zeros(300, 300, cv.CV_8UC1);
         let matFromArray = cv.matFromArray(3, 2, cv.CV_8UC1, [50, 50, 50, 100, 100, 100]);
-        cv.fillConvexPoly(frame2, matFromArray, [255, 0, 255, 255]);
+        //cv.fillConvexPoly(frame2, matFromArray, [255, 0, 255, 255]);
 
         cv.imshow('canvasRectangle', frame1);
-        cv.imshow('canvasPolygon', frame2);
+        //cv.imshow('canvasPolygon', frame2);
 
         frame1.delete();
         frame2.delete();

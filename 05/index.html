@@ -20,15 +20,13 @@
     изображений</h2>
 <p></p>
 <div>
-    <p>
-        <button id="submitButton">Try it</button>
-    </p>
+    <p></p>
     <table>
         <tr>
-            <td>оригинал</td>
-            <td>гистограмма</td>
-            <td>полутоновое</td>
-            <td>бинарное</td>
+            <td>source</td>
+            <td>histogram</td>
+            <td>gray</td>
+            <td>binary</td>
         </tr>
         <tr>
             <td>
@@ -45,23 +43,9 @@
             </td>
         </tr>
     </table>
-
-    <p>
-        Выберите png файл 400х400 или больше
-    </p>
-    <p>
-    <div><input type="file" id="fileInput" name="file"/></div>
-    </p>
 </div>
 <script src="/js/utils.js" type="text/javascript"></script>
 <script type="text/javascript">
-
-    let imageSrc = document.getElementById('imageSrc');
-    let fileInput = document.getElementById('fileInput');
-    let submitButton = document.getElementById('submitButton');
-    let canvasH = document.getElementById('canvasH');
-    let canvas1 = document.getElementById('canvas1');
-    let canvas2 = document.getElementById('canvas2');
 
     let utils = new Utils('errorMessage');
 
@@ -108,21 +92,10 @@
         dst.delete();
         dst1.delete();
         dst2.delete();
-
-        console.log("draw");
     };
 
-    submitButton.addEventListener('click', draw);
-
-    fileInput.addEventListener('change', (e) => {
-        imageSrc.src = URL.createObjectURL(e.target.files[0]);
-        canvasH.getContext('2d').clearRect(0, 0, canvasH.width, canvasH.height);
-        canvas1.getContext('2d').clearRect(0, 0, canvas1.width, canvas1.height);
-        canvas2.getContext('2d').clearRect(0, 0, canvas2.width, canvas2.height);
-    }, false);
-
     utils.loadOpenCv(() => {
-        //draw();
+        draw();
     });
 </script>
 </body>

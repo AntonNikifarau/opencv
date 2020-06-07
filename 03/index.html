@@ -23,8 +23,8 @@
     </p>
     <table>
         <tr>
-            <td>оригинал</td>
-            <td>отсечение</td>
+            <td>source</td>
+            <td>result</td>
         </tr>
         <tr>
             <td>
@@ -35,48 +35,22 @@
             </td>
         </tr>
     </table>
-
-    <p>
-        Выберите png файл 400х400 или больше
-    </p>
-    <p>
-    <div
-    "><input type="file" id="fileInput" name="file"/></div>
-</p>
 </div>
 <script src="/js/utils.js" type="text/javascript"></script>
 <script type="text/javascript">
-
-    let imageSrc = document.getElementById('imageSrc');
-    let fileInput = document.getElementById('fileInput');
-    let submitButton = document.getElementById('submitButton');
-    let canvas = document.getElementById('canvasOutput');
 
     let utils = new Utils('errorMessage');
 
     let draw = function () {
         let src = cv.imread('imageSrc');
-        let dst = new cv.Mat();
-
         let rect = new cv.Rect(150, 150, 200, 200);
-        dst = src.roi(rect);
+        let dst = src.roi(rect);
         cv.imshow('canvasOutput', dst);
         src.delete();
         dst.delete();
-
-        console.log("draw");
     };
-
-    submitButton.addEventListener('click', draw);
-
-    fileInput.addEventListener('change', (e) => {
-        imageSrc.src = URL.createObjectURL(e.target.files[0]);
-        const context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height);
-    }, false);
-
     utils.loadOpenCv(() => {
-        //draw();
+        draw();
     });
 </script>
 </body>
