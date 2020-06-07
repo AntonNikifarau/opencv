@@ -33,6 +33,7 @@
         </tr>
     </table>
 </div>
+<img id="imgSrc" src="/img/shape.jpg" hidden/>
 <script src="/js/utils.js" type="text/javascript"></script>
 <script type="text/javascript">
 
@@ -44,16 +45,20 @@
         let point2 = new cv.Point(220, 250);
         cv.rectangle(frame1, point1, point2, [0, 0, 255, 255], -1);
 
-        let frame2 = new cv.Mat.zeros(300, 300, cv.CV_8UC1);
-        let matFromArray = cv.matFromArray(3, 2, cv.CV_8UC1, [50, 50, 50, 100, 100, 100]);
-        //cv.fillConvexPoly(frame2, matFromArray, [255, 0, 255, 255]);
+        let src = cv.imread('imgSrc');
+        let frame2 = new cv.Mat();
+        let low = new cv.Mat(src.rows, src.cols, src.type(), [0, 0, 0, 0]);
+        let high = new cv.Mat(src.rows, src.cols, src.type(), [150, 150, 150, 255]);
+        cv.inRange(src, low, high, frame2);
 
         cv.imshow('canvasRectangle', frame1);
-        //cv.imshow('canvasPolygon', frame2);
+        cv.imshow('canvasPolygon', frame2);
 
         frame1.delete();
+        src.delete();
         frame2.delete();
-        matFromArray.delete();
+        low.delete();
+        high.delete();
     };
 
     utils.loadOpenCv(() => {
