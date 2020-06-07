@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>6. Устранение шумов на бинарном изображении. Устранение шумов на полутоновом изображении</title>
+    <title>7. Выделение границ объектов на бинарном изображении. Выделение границ объектов на полутоновом
+        изображении</title>
     <style>
         table {
             border-collapse: collapse;
@@ -15,21 +16,21 @@
 </head>
 <body>
 <a href="/"><< Назад</a>
-<h2>6. Устранение шумов на бинарном изображении. Устранение шумов на полутоновом изображении</h2>
+<h2>7. Выделение границ объектов на бинарном изображении. Выделение границ объектов на полутоновом изображении</h2>
 <p></p>
 <div>
-	<p>
+    <p>
         <button id="submitButton">Try it</button>
     </p>
     <table>
         <tr>
-            <td>salt-and-pepper noise</td>
-            <td>gaussian blur</td>
-            <td>median blur</td>
+            <td>source</td>
+            <td>bounding rect</td>
+            <td>min area rect</td>
         </tr>
         <tr>
             <td>
-                <img id="imageSrc" src="/img/lions.png" alt="No Image"/>
+                <img id="imageSrc1" src="/img/shape.jpg" alt="No Image"/>
             </td>
             <td>
                 <canvas id="canvas1"></canvas>
@@ -38,49 +39,115 @@
                 <canvas id="canvas2"></canvas>
             </td>
         </tr>
+        <tr>
+            <td>source</td>
+            <td>image contours</td>
+            <td>canny edge detection</td>
+        </tr>
+        <tr>
+            <td>
+                <img id="imageSrc2" src="/img/lena.png" alt="No Image"/>
+            </td>
+            <td>
+                <canvas id="canvas3"></canvas>
+            </td>
+            <td>
+                <canvas id="canvas4"></canvas>
+            </td>
+        </tr>
     </table>
-
-	<p>
-		Выберите png файл 400х400 или больше
-	</p>
-	<p>
-    <div"><input type="file" id="fileInput" name="file"/></div>
+    <!--
+    <p>
+        <div><input type="file" id="fileInput" name="file"/></div>
     </p>
+    -->
 </div>
 <script src="/js/utils.js" type="text/javascript"></script>
 <script type="text/javascript">
 
-	let imageSrc = document.getElementById('imageSrc');
-    let fileInput = document.getElementById('fileInput');
-	let submitButton = document.getElementById('submitButton');
-	let canvas1 = document.getElementById('canvas1');
-	let canvas2 = document.getElementById('canvas2');
+    //let imageSrc = document.getElementById('imageSrc1');
+    //let fileInput = document.getElementById('fileInput');
+    let submitButton = document.getElementById('submitButton');
+    //let canvas1 = document.getElementById('canvas1');
+    //let canvas2 = document.getElementById('canvas2');
 
     let utils = new Utils('errorMessage');
 
-    let draw = function() {
-        let src = cv.imread('imageSrc');
-		let dst1 = new cv.Mat();
-		let ksize = new cv.Size(3, 3);
-		let dst2 = new cv.Mat();
+    let draw = function () {
+        let src = cv.imread('imageSrc1');
+        let dst1 = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
+        cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
+        cv.threshold(src, src, 177, 200, cv.THRESH_BINARY);
+        let contours = new cv.MatVector();
+        let hierarchy = new cv.Mat();
+        cv.findContours(src, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
+        let cnt = contours.get(0);
 
-		cv.GaussianBlur(src, dst1, ksize, 0, 0, cv.BORDER_DEFAULT);
-		cv.medianBlur(src, dst2, 5);
-		cv.imshow('canvas1', dst1);
-		cv.imshow('canvas2', dst2);
+        let rect = cv.boundingRect(cnt);
+        let contoursColor = new cv.Scalar(255, 255, 255);
+        let rectangleColor = new cv.Scalar(255, 0, 0);
+        cv.drawContours(dst1, contours, 0, contoursColor, 1, 8, hierarchy, 100);
+        let point1 = new cv.Point(rect.x, rect.y);
+        let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
+        cv.rectangle(dst1, point1, point2, rectangleColor, 2, cv.LINE_AA, 0);
+        cv.imshow('canvas1', dst1);
 
-		src.delete(); dst1.delete(); dst2.delete();
+        let dst2 = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
 
-		console.log("draw");
+        let rotatedRect = cv.minAreaRect(cnt);
+        let vertices = cv.RotatedRect.points(rotatedRect);
+        cv.drawContours(dst2, contours, 0, contoursColor, 1, 8, hierarchy, 100);
+
+        for (let i = 0; i < 4; i++) {
+            cv.line(dst2, vertices[i], vertices[(i + 1) % 4], rectangleColor, 2, cv.LINE_AA, 0);
+        }
+        cv.imshow('canvas2', dst2);
+
+        src.delete();
+        dst1.delete();
+        dst2.delete();
+        contours.delete();
+        hierarchy.delete();
+        cnt.delete();
+
+        let src2 = cv.imread('imageSrc2');
+        let dst3 = new cv.Mat();
+        cv.cvtColor(src2, src2, cv.COLOR_RGB2GRAY, 0);
+
+        cv.Canny(src2, dst3, 50, 100, 3, false);
+        cv.imshow('canvas4', dst3);
+
+        let dst4 = cv.Mat.zeros(src2.cols, src2.rows, cv.CV_8UC3);
+        cv.threshold(src2, src2, 120, 200, cv.THRESH_BINARY);
+        let contours2 = new cv.MatVector();
+        let hierarchy2 = new cv.Mat();
+
+        cv.findContours(src2, contours2, hierarchy2, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
+
+        for (let i = 0; i < contours2.size(); ++i) {
+            let color = new cv.Scalar(Math.round(Math.random() * 255), Math.round(Math.random() * 255),
+                Math.round(Math.random() * 255));
+            cv.drawContours(dst4, contours2, i, color, 1, cv.LINE_8, hierarchy2, 100);
+        }
+        cv.imshow('canvas3', dst4);
+        src2.delete();
+        dst3.delete();
+        dst4.delete();
+        contours2.delete();
+        hierarchy2.delete();
+
+
+        console.log("draw");
     };
 
-	submitButton.addEventListener('click', draw);
-
-	fileInput.addEventListener('change', (e) => {
-        imageSrc.src = URL.createObjectURL(e.target.files[0]);
-		canvas1.getContext('2d').clearRect(0, 0, canvas1.width, canvas1.height);
-		canvas2.getContext('2d').clearRect(0, 0, canvas2.width, canvas2.height);
-    }, false);
+    submitButton.addEventListener('click', draw);
+    /*
+        fileInput.addEventListener('change', (e) => {
+            imageSrc.src = URL.createObjectURL(e.target.files[0]);
+            canvas1.getContext('2d').clearRect(0, 0, canvas1.width, canvas1.height);
+            canvas2.getContext('2d').clearRect(0, 0, canvas2.width, canvas2.height);
+        }, false);
+    */
 
     utils.loadOpenCv(() => {
         //draw();
