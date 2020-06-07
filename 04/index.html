@@ -21,36 +21,55 @@
     <p></p>
     <table>
         <tr>
-            <td>source</td>
-            <td>result</td>
+            <td>bezier</td>
         </tr>
         <tr>
             <td>
-                <img id="imageSrc" src="/img/lena.png" alt="No Image"/>
-            </td>
-            <td>
-                <canvas id="canvasOutput"></canvas>
+                <div id="canvasOutput"></div>
             </td>
         </tr>
     </table>
 </div>
-<script src="/js/utils.js" type="text/javascript"></script>
+<script src="https://unpkg.com/konva@4.0.0/konva.min.js"></script>
 <script type="text/javascript">
 
-    let utils = new Utils('errorMessage');
+    let width = 300;
+    let height = 300;
 
-    let draw = function () {
-        let src = cv.imread('imageSrc');
-        let rect = new cv.Rect(150, 150, 200, 200);
-        let dst = src.roi(rect);
-        cv.imshow('canvasOutput', dst);
-        src.delete();
-        dst.delete();
-    };
-
-    utils.loadOpenCv(() => {
-        draw();
+    let stage = new Konva.Stage({
+        container: 'canvasOutput',
+        width: width,
+        height: height,
     });
+
+    let graphicPoint = [
+        0, 300, 20, 200, 40, 100, 60, 100, 90, 0, 150, 300, 200, 20, 250, 50, 260, 120, 300, 110
+    ];
+
+    let layer = new Konva.Layer();
+
+    let line = new Konva.Line({
+        points: graphicPoint,
+        fill: '#00D2FF',
+        stroke: 'gray',
+        strokeWidth: 2,
+        closed: false,
+
+    });
+
+    let bezierLine = new Konva.Line({
+        points: graphicPoint,
+        fill: '#00D2FF',
+        stroke: 'blue',
+        strokeWidth: 2,
+        closed: false,
+        bezier: true,
+    });
+
+    layer.add(line);
+    layer.add(bezierLine);
+
+    stage.add(layer);
 </script>
 </body>
 </html>
